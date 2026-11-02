@@ -60,11 +60,11 @@ Two orders (74,215 units of one product in January 2011 and 80,995 units of anot
 - A product with an 82% rate (Pantry Chopping Board) was excluded because 99.6% of its cancelled value came from one customer.
 
 ## Charts
-![Monthly revenue](images/01_monthly_revenue.png)
-![Top products](images/02_top_products.png)
-![Top export markets](images/03_top_export_markets.png)
-![RFM segments](images/04_rfm_segments.png)
-![Monthly cancellation rate](images/05_cancellation_rate.png)
+![Monthly revenue](01_monthly_revenue.png)
+![Top products](02_top_products.png)
+![Top export markets](03_top_export_markets.png)
+![RFM segments](04_rfm_segments.png)
+![Monthly cancellation rate](05_cancellation_rate.png)
 
 ## SAP-Aligned Data Model
 The cleaned transactions were restructured into tables following SAP SD billing naming: VBRK (billing header), VBRP (billing items), KNA1 (customer master) and MAKT (material descriptions). Six integrity checks confirm that headers equal the sum of their items, totals match cleaned revenue, item keys are unique, and all items, materials and customers have matching header and master records. This is a structural mapping of public data, not an extract from SAP.
