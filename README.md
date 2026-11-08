@@ -22,8 +22,8 @@ UCI Machine Learning Repository, [Online Retail II](https://archive.ics.uci.edu/
 ## Method
 1. **Audit:** missing values, duplicates, negative quantities and prices.
 2. **Cleaning:** removed duplicates, non-product codes and invalid rows; separated cancellations; removed two extreme orders (see below).
-3. **Analysis:** monthly trend, top products and markets, cancellation analysis.
-4. **RFM segmentation:** Recency, Frequency and Monetary scores (quintiles) grouped into five segments.
+3. **Analysis:** monthly trend, top products (grouped by stock code, since one description can cover several products and one product can have several descriptions) and markets, cancellation analysis.
+4. **RFM segmentation:** Recency, Frequency and Monetary scores (quintiles) grouped into five segments, plus a separate at-risk screen based on recency and frequency only.
 5. **SAP-aligned model:** VBRK, VBRP, KNA1 and MAKT tables following SAP SD naming, with six integrity checks.
 
 ### Data Waterfall
@@ -42,9 +42,9 @@ Two orders (74,215 units of one product in January 2011 and 80,995 units of anot
 - 1,003,605 valid sales lines after cleaning; gross sales revenue was £19,411,634 across 39,521 invoices.
 - Revenue peaked in November 2011 (£1,453,266); the lowest complete month was February 2011 (£508,015).
 - Revenue for December 2010 to November 2011 was +1.7% compared with December 2009 to November 2010 (complete months only).
-- The top 10 products generated 7.3% of revenue. The UK accounted for 85.3% of revenue; the largest export market was EIRE (£633,269).
+- The top 10 products (ranked by stock code) generated 7.6% of revenue. The UK accounted for 85.3% of revenue; the largest export market was EIRE (£633,269).
 - 13.3% of revenue came from transactions without a Customer ID and was excluded from segmentation.
-- Across 5,853 identified customers, Champions made up 22.0% of customers and 73.0% of revenue. 965 customers were classed as At Risk, representing £369,546 of historical revenue. The top 20% of identified customers generated 76.9% of identified revenue.
+- Across 5,853 identified customers, Champions made up 22.0% of customers and 73.0% of revenue. 965 customers fell in the score-based At Risk segment, representing £369,546 of historical revenue. A separate screen (recency score ≤ 2 and frequency score ≥ 3) flags 829 customers who used to buy often but have not bought recently; they are listed in `output/at_risk_screen.csv`. The top 20% of identified customers generated 76.9% of identified revenue.
 
 ## Cancellation Analysis
 - **Definitions:** Gross = valid sales lines; Cancelled = lines on invoices starting with "C"; Net = Gross minus Cancelled.
@@ -70,7 +70,7 @@ Two orders (74,215 units of one product in January 2011 and 80,995 units of anot
 The cleaned transactions were restructured into tables following SAP SD billing naming: VBRK (billing header), VBRP (billing items), KNA1 (customer master) and MAKT (material descriptions). Six integrity checks confirm that headers equal the sum of their items, totals match cleaned revenue, item keys are unique, and all items, materials and customers have matching header and master records. This is a structural mapping of public data, not an extract from SAP.
 
 ## Recommendations
-1. Win-back campaign for At Risk customers.
+1. Test a win-back campaign on the 829 customers in the at-risk screen: they bought often in the past but not recently. This is a screening rule, not a validated churn prediction.
 2. Loyalty programme for Champions and Loyal customers.
 3. Review the Cherry Lights colour variants and the Vintage kitchen cabinets (high cancellation rates spread across many customers) for variant, description or fulfilment issues. This is a hypothesis and has not been tested.
 4. Capture customer IDs at checkout to improve segmentation.
@@ -80,7 +80,7 @@ The cleaned transactions were restructured into tables following SAP SD billing 
 - One retailer, December 2009 to December 2011; may not reflect current behaviour.
 - The final month is incomplete and was excluded from trend calculations.
 - Transactions without a Customer ID were excluded from RFM analysis.
-- RFM thresholds follow a standard convention; Monetary is part of the score, so Champions' revenue share is partly by construction.
+- RFM thresholds follow a standard convention; Monetary is part of the score, so Champions' revenue share is partly by construction. The At Risk segment is a band of total score, so it can include customers who never bought often; the separate at-risk screen addresses this, but neither is a validated churn model.
 - Cancellations are matched to earlier sales approximately and may include order edits, not only returns.
 - The monthly cancellation rate divides cancellations posted in a month by sales in that month.
 - Two extreme orders were removed as likely entry errors; other bulk cancellations (e.g. invoice C550456) remain and can distort monthly rates.
